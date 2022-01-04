@@ -18,16 +18,18 @@ pacman::p_load("tidyverse", "imager", "here", "glue", "magick", "dithr")
 #' Raimond Spekking / CC BY-SA 4.0
 img_path <- here("plots", "1094px-Kölner_Dom_und_Hohenzollernbrücke_Abenddämmerung_(9706_7_8).jpg")
 
-im <- image_read(img_path) %>%
-image_convert(type='grayscale')
+original_image <- image_read(img_path) 
 
-plot(im)
+grayscale_image <- original_image %>%
+  image_convert(type = "grayscale")
 
-image_info(im)
-width <- image_info(im)$width
-height <- image_info(im)$height
+plot(grayscale_image)
 
-m <- as_EBImage(im)@.Data
+image_info(grayscale_image)
+width <- image_info(grayscale_image)$width
+height <- image_info(grayscale_image)$height
+
+m <- as_EBImage(grayscale_image)@.Data
 
 stages <- 10
 plot_dir <- here("plots", "day02")
@@ -39,3 +41,15 @@ for (i in seq_len(stages)) {
   plot_matrix(dithered_matrix)
   invisible(dev.off())
 }
+
+# Morphing -----------------------
+
+dithered_image <- image_read(here(plot_dir, "day02-03.png"))
+
+images <- c(original_image, grayscale_image, dithered_image)
+
+morphed <- image_morph(images, frames = 12)
+image_write(morphed, path = here("plots", "day02-animated-morphed.gif"), 
+            format = "gif", quality = 100, density = 100)
+
+
