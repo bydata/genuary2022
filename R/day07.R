@@ -82,17 +82,35 @@ draw_lines <- function(seed = NULL) {
   lines
 }
 
-draw_lines() %>% 
-  ggplot() +
-  geom_segment(aes(x = x, y = y, xend = xend, yend = yend),
-               col = "white", alpha = 0.99, size = 0.38) +
-  coord_equal(xlim = c(0, (dots_horizontally + 1) * grid_size), 
-              ylim = c(0, (dots_vertically + 1) * grid_size), 
-              expand = FALSE) +
-  theme_void() +
-  theme(plot.background = element_rect(color = NA, fill = "black"),
-        plot.margin = margin(0, 0, 0, 0))
-ggsave(here("plots", "day07.png"), dpi = 300, width = 5, height = 5 * 9/16 )
+plots <- vector("list", 4)
+for (i in seq_along(plots)) {
+  plots[[i]] <- draw_lines() %>% 
+    ggplot() +
+    geom_segment(aes(x = x, y = y, xend = xend, yend = yend),
+                 col = "white", alpha = 0.99, size = 0.3) +
+    coord_equal(xlim = c(0, (dots_horizontally + 1) * grid_size), 
+                ylim = c(0, (dots_vertically + 1) * grid_size), 
+                expand = FALSE) +
+    theme_void() +
+    theme(plot.background = element_rect(color = NA, fill = "black"),
+          plot.margin = margin(0, 0, 0, 0))
+  ggsave(here::here("plots", glue::glue("day07-{i}.png")), 
+         plot = plots[[i]], dpi = 600, width = 5, height = 5 * 9/16 )
+  
+}
 
+# Stitching it all together
+library(patchwork)
 
+(plots[[1]] + plots[[2]]) / 
+  (plots[[3]] + plots[[4]]) +
+  plot_annotation(caption = "Sol LeWitt's **Wall Drawing 289** redrawn with R",
+                  theme = theme(plot.caption = ggtext::element_markdown(
+                    color = "grey30", hjust = 0.5,
+                    family = "PT Serif", size = 12                                      
+                                                      ))) &
+  theme(panel.background = element_rect(color = "white"),
+        plot.margin = margin(2, 2, 2, 2)) 
+ggsave(here::here("plots", "day07-combined.png"),
+       dpi = 600, width = 6, height = 6 * 9/16)
             
