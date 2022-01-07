@@ -108,9 +108,9 @@ library(patchwork)
                   theme = theme(plot.caption = ggtext::element_markdown(
                     color = "grey30", hjust = 0.5,
                     family = "PT Serif", size = 12                                      
-                                                      ))) &
-  theme(panel.background = element_rect(color = "white"),
-        plot.margin = margin(2, 2, 2, 2)) 
+                  ))) &
+  theme(plot.background = element_rect(color = "white"),
+        plot.margin = margin(10, 10, 10, 10)) 
 ggsave(here::here("plots", "day07-combined.png"),
        dpi = 600, width = 6, height = 6 * 9/16)
             
